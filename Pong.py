@@ -12,6 +12,12 @@ BALL_SPEED_Y = 4
 PLAYER1_SCORE = 0
 PLAYER2_SCORE = 0
 
+# Game states
+TITLE_SCREEN = 0
+GAME_PLAY = 1
+game_state = TITLE_SCREEN
+single_player = False
+
 # Game objects
 paddle1 = Rect((30, HEIGHT // 2 - PADDLE_HEIGHT // 2), (PADDLE_WIDTH, PADDLE_HEIGHT))
 paddle2 = Rect((WIDTH - 30 - PADDLE_WIDTH, HEIGHT // 2 - PADDLE_HEIGHT // 2), (PADDLE_WIDTH, PADDLE_HEIGHT))
@@ -20,6 +26,17 @@ ball_speed = [BALL_SPEED_X, BALL_SPEED_Y]
 
 def draw():
     screen.clear()
+    if game_state == TITLE_SCREEN:
+        draw_title_screen()
+    elif game_state == GAME_PLAY:
+        draw_game_play()
+
+def draw_title_screen():
+    screen.draw.text("Pong Game", center=(WIDTH // 2, HEIGHT // 3), fontsize=60, color="white")
+    screen.draw.text("Press 1 for 1 Player", center=(WIDTH // 2, HEIGHT // 2), fontsize=40, color="white")
+    screen.draw.text("Press 2 for 2 Players", center=(WIDTH // 2, HEIGHT // 2 + 50), fontsize=40, color="white")
+
+def draw_game_play():
     screen.draw.rect(paddle1, 'white')
     screen.draw.rect(paddle2, 'white')
     screen.draw.filled_rect(ball, 'white')
@@ -27,6 +44,10 @@ def draw():
     screen.draw.text(str(PLAYER2_SCORE), (WIDTH * 3 // 4, 20), fontsize=50)
 
 def update():
+    if game_state == GAME_PLAY:
+        update_game_play()
+
+def update_game_play():
     global PLAYER1_SCORE, PLAYER2_SCORE
 
     # Player 1 movement
@@ -36,10 +57,14 @@ def update():
         paddle1.y += PADDLE_SPEED
 
     # Player 2 movement
-    if keyboard.up and paddle2.top > 0:
-        paddle2.y -= PADDLE_SPEED
-    if keyboard.down and paddle2.bottom < HEIGHT:
-        paddle2.y += PADDLE_SPEED
+    if not single_player:
+        if keyboard.up and paddle2.top > 0:
+            paddle2.y -= PADDLE_SPEED
+        if keyboard.down and paddle2.bottom < HEIGHT:
+            paddle2.y += PADDLE_SPEED
+    else:
+        # AI opponent movement will be implemented later
+        pass
 
     # Ball movement
     ball.x += ball_speed[0]
@@ -66,4 +91,22 @@ def reset_ball():
     ball.y = HEIGHT // 2 - BALL_SIZE // 2
     ball_speed[0] *= -1
 
+def on_key_down(key):
+    global game_state, single_player
+    if game_state == TITLE_SCREEN:
+        if key == keys.K_1:
+            single_player = True
+            start_game()
+        elif key == keys.K_2:
+            single_player = False
+            start_game()
+
+def start_game():
+    global game_state, PLAYER1_SCORE, PLAYER2_SCORE
+    game_state = GAME_PLAY
+    PLAYER1_SCORE = 0
+    PLAYER2_SCORE = 0
+    reset_ball()
+
 pgzrun.go()
+
