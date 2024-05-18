@@ -11,6 +11,7 @@ BALL_SPEED_X = 4
 BALL_SPEED_Y = 4
 PLAYER1_SCORE = 0
 PLAYER2_SCORE = 0
+MAX_BOUNCE_ANGLE = 45  # Max bounce angle in degrees
 
 # Game states
 TITLE_SCREEN = 0
@@ -75,8 +76,10 @@ def update_game_play():
         ball_speed[1] = -ball_speed[1]
 
     # Ball collision with paddles
-    if ball.colliderect(paddle1) or ball.colliderect(paddle2):
-        ball_speed[0] = -ball_speed[0]
+    if ball.colliderect(paddle1):
+        bounce_ball(paddle1)
+    if ball.colliderect(paddle2):
+        bounce_ball(paddle2)
 
     # Ball goes out of bounds
     if ball.left <= 0:
@@ -98,10 +101,17 @@ def ai_move():
     if paddle2.bottom > HEIGHT:
         paddle2.bottom = HEIGHT
 
+def bounce_ball(paddle):
+    offset = (ball.centery - paddle.centery) / (PADDLE_HEIGHT / 2)
+    bounce_angle = offset * MAX_BOUNCE_ANGLE
+    ball_speed[0] = -ball_speed[0]  # Reverse horizontal direction
+    ball_speed[1] = BALL_SPEED_X * offset  # Adjust vertical direction
+
 def reset_ball():
     ball.x = WIDTH // 2 - BALL_SIZE // 2
     ball.y = HEIGHT // 2 - BALL_SIZE // 2
-    ball_speed[0] *= -1
+    ball_speed[0] = BALL_SPEED_X if ball_speed[0] < 0 else -BALL_SPEED_X
+    ball_speed[1] = BALL_SPEED_Y
 
 def on_key_down(key):
     global game_state, single_player
