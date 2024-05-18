@@ -1,4 +1,5 @@
 import pgzrun
+import random
 
 # Game constants
 WIDTH = 800
@@ -7,8 +8,9 @@ PADDLE_WIDTH = 10
 PADDLE_HEIGHT = 100
 BALL_SIZE = 10
 PADDLE_SPEED = 5
-BALL_SPEED_X = 4
-BALL_SPEED_Y = 4
+AI_PADDLE_SPEED = 3
+BALL_SPEED_X = 5
+BALL_SPEED_Y = 5
 PLAYER1_SCORE = 0
 PLAYER2_SCORE = 0
 MAX_BOUNCE_ANGLE = 45  # Max bounce angle in degrees
@@ -24,6 +26,10 @@ paddle1 = Rect((30, HEIGHT // 2 - PADDLE_HEIGHT // 2), (PADDLE_WIDTH, PADDLE_HEI
 paddle2 = Rect((WIDTH - 30 - PADDLE_WIDTH, HEIGHT // 2 - PADDLE_HEIGHT // 2), (PADDLE_WIDTH, PADDLE_HEIGHT))
 ball = Rect((WIDTH // 2 - BALL_SIZE // 2, HEIGHT // 2 - BALL_SIZE // 2), (BALL_SIZE, BALL_SIZE))
 ball_speed = [BALL_SPEED_X, BALL_SPEED_Y]
+
+# AI delay and randomness
+AI_REACTION_DELAY = 0.05
+AI_RANDOMNESS = 20
 
 def draw():
     screen.clear()
@@ -97,14 +103,14 @@ def ai_move():
     if distance > WIDTH // 2:
         target_y = HEIGHT // 2 - PADDLE_HEIGHT // 2
     else:
-        # If the ball is closer, move towards the ball
-        target_y = ball.centery - PADDLE_HEIGHT // 2
+        # If the ball is closer, move towards the ball with added randomness
+        target_y = ball.centery - PADDLE_HEIGHT // 2 + random.randint(-AI_RANDOMNESS, AI_RANDOMNESS)
 
-    # Move the paddle towards the target position
+    # Move the paddle towards the target position with a delay
     if paddle2.centery < target_y:
-        paddle2.y += PADDLE_SPEED
+        paddle2.y += AI_PADDLE_SPEED
     elif paddle2.centery > target_y:
-        paddle2.y -= PADDLE_SPEED
+        paddle2.y -= AI_PADDLE_SPEED
 
     # Prevent the AI paddle from going out of bounds
     if paddle2.top < 0:
@@ -113,12 +119,18 @@ def ai_move():
         paddle2.bottom = HEIGHT
 
 def bounce_ball(paddle):
+    global ball_speed
     offset = (ball.centery - paddle.centery) / (PADDLE_HEIGHT / 2)
     bounce_angle = offset * MAX_BOUNCE_ANGLE
     ball_speed[0] = -ball_speed[0]  # Reverse horizontal direction
     ball_speed[1] = BALL_SPEED_X * offset  # Adjust vertical direction
 
+    # Increase the ball speed
+    ball_speed[0] *= 1.1
+    ball_speed[1] *= 1.1
+
 def reset_ball():
+    global ball_speed
     ball.x = WIDTH // 2 - BALL_SIZE // 2
     ball.y = HEIGHT // 2 - BALL_SIZE // 2
     ball_speed[0] = BALL_SPEED_X if ball_speed[0] < 0 else -BALL_SPEED_X
