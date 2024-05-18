@@ -63,8 +63,8 @@ def update_game_play():
         if keyboard.down and paddle2.bottom < HEIGHT:
             paddle2.y += PADDLE_SPEED
     else:
-        # AI opponent movement will be implemented later
-        pass
+        # AI opponent movement
+        ai_move()
 
     # Ball movement
     ball.x += ball_speed[0]
@@ -85,6 +85,18 @@ def update_game_play():
     if ball.right >= WIDTH:
         PLAYER1_SCORE += 1
         reset_ball()
+
+def ai_move():
+    if ball.y < paddle2.top:
+        paddle2.y -= PADDLE_SPEED
+    elif ball.y > paddle2.bottom:
+        paddle2.y += PADDLE_SPEED
+
+    # Prevent the AI paddle from going out of bounds
+    if paddle2.top < 0:
+        paddle2.top = 0
+    if paddle2.bottom > HEIGHT:
+        paddle2.bottom = HEIGHT
 
 def reset_ball():
     ball.x = WIDTH // 2 - BALL_SIZE // 2
@@ -109,4 +121,3 @@ def start_game():
     reset_ball()
 
 pgzrun.go()
-
