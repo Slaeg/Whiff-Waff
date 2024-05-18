@@ -1,6 +1,7 @@
 import pgzrun
 import random
 
+
 # Game constants
 WIDTH = 800
 HEIGHT = 600
@@ -22,9 +23,9 @@ game_state = TITLE_SCREEN
 single_player = False
 
 # Game objects
-paddle1 = Rect((30, HEIGHT // 2 - PADDLE_HEIGHT // 2), (PADDLE_WIDTH, PADDLE_HEIGHT))
-paddle2 = Rect((WIDTH - 30 - PADDLE_WIDTH, HEIGHT // 2 - PADDLE_HEIGHT // 2), (PADDLE_WIDTH, PADDLE_HEIGHT))
-ball = Rect((WIDTH // 2 - BALL_SIZE // 2, HEIGHT // 2 - BALL_SIZE // 2), (BALL_SIZE, BALL_SIZE))
+paddle1 = Rect((30, HEIGHT // 2 - PADDLE_HEIGHT // 2), (PADDLE_WIDTH, PADDLE_HEIGHT))  # type: ignore
+paddle2 = Rect((WIDTH - 30 - PADDLE_WIDTH, HEIGHT // 2 - PADDLE_HEIGHT // 2), (PADDLE_WIDTH, PADDLE_HEIGHT))  # type: ignore
+ball = Rect((WIDTH // 2 - BALL_SIZE // 2, HEIGHT // 2 - BALL_SIZE // 2), (BALL_SIZE, BALL_SIZE))  # type: ignore
 ball_speed = [BALL_SPEED_X, BALL_SPEED_Y]
 
 # AI delay and randomness
@@ -32,23 +33,23 @@ AI_REACTION_DELAY = 0.05
 AI_RANDOMNESS = 20
 
 def draw():
-    screen.clear()
+    screen.clear()  # type: ignore
     if game_state == TITLE_SCREEN:
         draw_title_screen()
     elif game_state == GAME_PLAY:
         draw_game_play()
 
 def draw_title_screen():
-    screen.draw.text("Pong Game", center=(WIDTH // 2, HEIGHT // 3), fontsize=60, color="white")
-    screen.draw.text("Press 1 for 1 Player", center=(WIDTH // 2, HEIGHT // 2), fontsize=40, color="white")
-    screen.draw.text("Press 2 for 2 Players", center=(WIDTH // 2, HEIGHT // 2 + 50), fontsize=40, color="white")
+    screen.draw.text("Pong Game", center=(WIDTH // 2, HEIGHT // 3), fontsize=60, color="white")  # type: ignore
+    screen.draw.text("Press 1 for 1 Player", center=(WIDTH // 2, HEIGHT // 2), fontsize=40, color="white")  # type: ignore
+    screen.draw.text("Press 2 for 2 Players", center=(WIDTH // 2, HEIGHT // 2 + 50), fontsize=40, color="white")  # type: ignore
 
 def draw_game_play():
-    screen.draw.rect(paddle1, 'white')
-    screen.draw.rect(paddle2, 'white')
-    screen.draw.filled_rect(ball, 'white')
-    screen.draw.text(str(PLAYER1_SCORE), (WIDTH // 4, 20), fontsize=50)
-    screen.draw.text(str(PLAYER2_SCORE), (WIDTH * 3 // 4, 20), fontsize=50)
+    screen.draw.rect(paddle1, 'white')  # type: ignore
+    screen.draw.rect(paddle2, 'white')  # type: ignore
+    screen.draw.filled_rect(ball, 'white')  # type: ignore
+    screen.draw.text(str(PLAYER1_SCORE), (WIDTH // 4, 20), fontsize=50)  # type: ignore
+    screen.draw.text(str(PLAYER2_SCORE), (WIDTH * 3 // 4, 20), fontsize=50)  # type: ignore
 
 def update():
     if game_state == GAME_PLAY:
@@ -58,16 +59,16 @@ def update_game_play():
     global PLAYER1_SCORE, PLAYER2_SCORE
 
     # Player 1 movement
-    if keyboard.w and paddle1.top > 0:
+    if keyboard.w and paddle1.top > 0:  # type: ignore
         paddle1.y -= PADDLE_SPEED
-    if keyboard.s and paddle1.bottom < HEIGHT:
+    if keyboard.s and paddle1.bottom < HEIGHT:  # type: ignore
         paddle1.y += PADDLE_SPEED
 
     # Player 2 movement
     if not single_player:
-        if keyboard.up and paddle2.top > 0:
+        if keyboard.up and paddle2.top > 0:  # type: ignore
             paddle2.y -= PADDLE_SPEED
-        if keyboard.down and paddle2.bottom < HEIGHT:
+        if keyboard.down and paddle2.bottom < HEIGHT:  # type: ignore
             paddle2.y += PADDLE_SPEED
     else:
         # AI opponent movement
@@ -82,9 +83,9 @@ def update_game_play():
         ball_speed[1] = -ball_speed[1]
 
     # Ball collision with paddles
-    if ball.colliderect(paddle1):
+    if ball.colliderect(paddle1):  # type: ignore
         bounce_ball(paddle1)
-    if ball.colliderect(paddle2):
+    if ball.colliderect(paddle2):  # type: ignore
         bounce_ball(paddle2)
 
     # Ball goes out of bounds
@@ -139,10 +140,10 @@ def reset_ball():
 def on_key_down(key):
     global game_state, single_player
     if game_state == TITLE_SCREEN:
-        if key == keys.K_1:
+        if key == keys.K_1:  # type: ignore
             single_player = True
             start_game()
-        elif key == keys.K_2:
+        elif key == keys.K_2:  # type: ignore
             single_player = False
             start_game()
 
