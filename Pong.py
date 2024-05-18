@@ -90,10 +90,21 @@ def update_game_play():
         reset_ball()
 
 def ai_move():
-    if ball.y < paddle2.top:
-        paddle2.y -= PADDLE_SPEED
-    elif ball.y > paddle2.bottom:
+    # Calculate the distance from the ball to the AI paddle
+    distance = ball.x - paddle2.x
+
+    # If the ball is far, keep the paddle in the center
+    if distance > WIDTH // 2:
+        target_y = HEIGHT // 2 - PADDLE_HEIGHT // 2
+    else:
+        # If the ball is closer, move towards the ball
+        target_y = ball.centery - PADDLE_HEIGHT // 2
+
+    # Move the paddle towards the target position
+    if paddle2.centery < target_y:
         paddle2.y += PADDLE_SPEED
+    elif paddle2.centery > target_y:
+        paddle2.y -= PADDLE_SPEED
 
     # Prevent the AI paddle from going out of bounds
     if paddle2.top < 0:
