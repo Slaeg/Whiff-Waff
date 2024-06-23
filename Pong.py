@@ -21,10 +21,14 @@ GAME_PLAY = 1
 game_state = TITLE_SCREEN
 single_player = False
 
-# Game objects
-paddle1 = Rect((30, HEIGHT // 2 - PADDLE_HEIGHT // 2), (PADDLE_WIDTH, PADDLE_HEIGHT))
-paddle2 = Rect((WIDTH - 30 - PADDLE_WIDTH, HEIGHT // 2 - PADDLE_HEIGHT // 2), (PADDLE_WIDTH, PADDLE_HEIGHT))
-ball = Rect((WIDTH // 2 - BALL_SIZE // 2, HEIGHT // 2 - BALL_SIZE // 2), (BALL_SIZE, BALL_SIZE))
+# Load game objects
+paddle1 = Actor('paddle', (30, HEIGHT // 2))
+paddle2 = Actor('paddle', (WIDTH - 30, HEIGHT // 2))
+ball = Actor('ball', (WIDTH // 2, HEIGHT // 2))
+
+
+
+# Initial ball speed
 ball_speed = [BALL_SPEED_X, BALL_SPEED_Y]
 
 # AI delay and randomness
@@ -33,6 +37,7 @@ AI_RANDOMNESS = 20
 
 def draw():
     screen.clear()
+    screen.blit('background', (0, 0))  # Draw the background
     if game_state == TITLE_SCREEN:
         draw_title_screen()
     elif game_state == GAME_PLAY:
@@ -44,9 +49,9 @@ def draw_title_screen():
     screen.draw.text("Press 2 for 2 Players", center=(WIDTH // 2, HEIGHT // 2 + 50), fontsize=40, color="white")
 
 def draw_game_play():
-    screen.draw.rect(paddle1, 'white')
-    screen.draw.rect(paddle2, 'white')
-    screen.draw.filled_rect(ball, 'white')
+    paddle1.draw()
+    paddle2.draw()
+    ball.draw()
     screen.draw.text(str(PLAYER1_SCORE), (WIDTH // 4, 20), fontsize=50)
     screen.draw.text(str(PLAYER2_SCORE), (WIDTH * 3 // 4, 20), fontsize=50)
 
@@ -126,7 +131,6 @@ def ai_move():
         paddle2.top = 0
     if paddle2.bottom > HEIGHT:
         paddle2.bottom = HEIGHT
-
 
 def bounce_ball(paddle):
     global ball_speed
