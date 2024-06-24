@@ -1,5 +1,11 @@
+x = 10
+y = 10
+import os
+os.environ['SDL_VIDEO_WINDOW_POS'] = f'{x},{y}'
+
 import pgzrun
 import random
+import math
 
 # Game constants
 WIDTH = 800
@@ -9,16 +15,18 @@ PADDLE_HEIGHT = 100
 BALL_SIZE = 10
 PADDLE_SPEED = 5
 AI_PADDLE_SPEED = 3
-BALL_SPEED_X = 5
-BALL_SPEED_Y = 5
-PLAYER1_SCORE = 0
-PLAYER2_SCORE = 0
+BALL_SPEED_X = 4
+BALL_SPEED_Y = 4
 MAX_BOUNCE_ANGLE = 45  # Max bounce angle in degrees
+WINNING_SCORE = 11
+WINNING_MARGIN = 2
 
 # Game states
+INTRO_SCREEN = -1
 TITLE_SCREEN = 0
 GAME_PLAY = 1
-game_state = TITLE_SCREEN
+GAME_OVER = 2
+game_state = INTRO_SCREEN
 single_player = False
 
 # Load game objects
@@ -26,25 +34,40 @@ paddle1 = Actor('paddle', (30, HEIGHT // 2))
 paddle2 = Actor('paddle', (WIDTH - 30, HEIGHT // 2))
 ball = Actor('ball', (WIDTH // 2, HEIGHT // 2))
 
-
-
 # Initial ball speed
 ball_speed = [BALL_SPEED_X, BALL_SPEED_Y]
+
+# Player scores
+player1_score = 0
+player2_score = 0
 
 # AI delay and randomness
 AI_REACTION_DELAY = 0.05
 AI_RANDOMNESS = 20
 
+# Music for the intro screen
+music.play_once('intro_music')  # Ensure the music plays once
+
 def draw():
     screen.clear()
     screen.blit('background', (0, 0))  # Draw the background
-    if game_state == TITLE_SCREEN:
+    if game_state == INTRO_SCREEN:
+        draw_intro_screen()
+    elif game_state == TITLE_SCREEN:
         draw_title_screen()
     elif game_state == GAME_PLAY:
         draw_game_play()
+    elif game_state == GAME_OVER:
+        draw_game_over()
+
+def draw_intro_screen():
+    screen.draw.text("Ping-pong was invented on the dining tables of England in the 19th century, and it was called Wiff-waff!", center=(WIDTH // 2, HEIGHT // 3), fontsize=30, color="white", width=WIDTH-40)
+    screen.draw.text("And there, I think, you have the difference between us and the rest of the world.", center=(WIDTH // 2, HEIGHT // 3 + 40), fontsize=30, color="white", width=WIDTH-40)
+    screen.draw.text("Other nations, the French, looked at a dining table and saw an opportunity to have dinner; we looked at it and saw an opportunity to play Wiff-waff.", center=(WIDTH // 2, HEIGHT // 3 + 80), fontsize=30, color="white", width=WIDTH-40)
+    screen.draw.text("- Boris Johnson", center=(WIDTH // 2, HEIGHT // 3 + 120), fontsize=30, color="white", width=WIDTH-40)
 
 def draw_title_screen():
-    screen.draw.text("Pong Game", center=(WIDTH // 2, HEIGHT // 3), fontsize=60, color="white")
+    screen.draw.text("Wiff Waff", center=(WIDTH // 2, HEIGHT // 3), fontsize=60, color="white")
     screen.draw.text("Press 1 for 1 Player", center=(WIDTH // 2, HEIGHT // 2), fontsize=40, color="white")
     screen.draw.text("Press 2 for 2 Players", center=(WIDTH // 2, HEIGHT // 2 + 50), fontsize=40, color="white")
 
@@ -52,15 +75,26 @@ def draw_game_play():
     paddle1.draw()
     paddle2.draw()
     ball.draw()
-    screen.draw.text(str(PLAYER1_SCORE), (WIDTH // 4, 20), fontsize=50)
-    screen.draw.text(str(PLAYER2_SCORE), (WIDTH * 3 // 4, 20), fontsize=50)
+    screen.draw.text(str(player1_score), (WIDTH // 4, 20), fontsize=50)
+    screen.draw.text(str(player2_score), (WIDTH * 3 // 4, 20), fontsize=50)
+
+def draw_game_over():
+    winner = "Player 1" if player1_score > player2_score else "Player 2"
+    screen.draw.text(f"{winner} Wins!", center=(WIDTH // 2, HEIGHT // 3), fontsize=60, color="white")
+    screen.draw.text("Press ENTER to Restart", center=(WIDTH // 2, HEIGHT // 2), fontsize=40, color="white")
 
 def update():
-    if game_state == GAME_PLAY:
+    if game_state == INTRO_SCREEN:
+        update_intro_screen()
+    elif game_state == TITLE_SCREEN:
+        pass  # No update needed for the title screen
+    elif game_state == GAME_PLAY:
         update_game_play()
+    elif game_state == GAME_OVER:
+        pass  # No update needed for the game over screen
 
 def update_game_play():
-    global PLAYER1_SCORE, PLAYER2_SCORE
+    global player1_score, player2_score, game_state
 
     # Player 1 movement
     if keyboard.w and paddle1.top > 0:
@@ -94,11 +128,19 @@ def update_game_play():
 
     # Ball goes out of bounds
     if ball.left <= 0:
-        PLAYER2_SCORE += 1
-        reset_ball(serving_player=2)
+        player2_score += 1
+        sounds.wiffwaff.play()  # Play out-of-bounds sound
+        if check_winner():
+            game_state = GAME_OVER
+        else:
+            reset_ball(serving_player=1)
     if ball.right >= WIDTH:
-        PLAYER1_SCORE += 1
-        reset_ball(serving_player=1)
+        player1_score += 1
+        sounds.wiffwaff.play()  # Play out-of-bounds sound
+        if check_winner():
+            game_state = GAME_OVER
+        else:
+            reset_ball(serving_player=2)
 
 def ai_move():
     # Predict where the ball will be when it reaches the AI paddle's x position
@@ -137,23 +179,50 @@ def bounce_ball(paddle):
     offset = (ball.centery - paddle.centery) / (PADDLE_HEIGHT / 2)
     bounce_angle = offset * MAX_BOUNCE_ANGLE
     ball_speed[0] = -ball_speed[0]  # Reverse horizontal direction
-    ball_speed[1] = BALL_SPEED_X * offset  # Adjust vertical direction
+
+    # Convert the bounce angle to radians for calculation
+    bounce_radians = math.radians(bounce_angle)
+    speed = math.hypot(ball_speed[0], ball_speed[1])
+    ball_speed[1] = speed * math.sin(bounce_radians)
 
     # Increase the ball speed
     ball_speed[0] *= 1.1
     ball_speed[1] *= 1.1
 
+    # Ensure the ball doesn't clip through the paddle
+    if ball_speed[0] > 0:
+        ball.left = paddle.right
+    else:
+        ball.right = paddle.left
+    
+    # Play sound effect based on which paddle was hit
+    if paddle == paddle1:
+        sounds.waff.play()
+    else:
+        sounds.wiff.play()
+
 def reset_ball(serving_player):
     global ball_speed
     if serving_player == 1:
-        ball.x = paddle2.x - BALL_SIZE - 1  # Position near player 2's paddle
-        ball.y = paddle2.centery - BALL_SIZE // 2
-        ball_speed[0] = -BALL_SPEED_X  # Ball moves towards player 1
+        ball.x = paddle1.right + BALL_SIZE * 2  # Position near player 1's paddle, but not too close
+        ball.y = paddle1.centery
+        ball_speed[0] = BALL_SPEED_X
     else:
-        ball.x = paddle1.x + PADDLE_WIDTH + 1  # Position near player 1's paddle
-        ball.y = paddle1.centery - BALL_SIZE // 2
-        ball_speed[0] = BALL_SPEED_X  # Ball moves towards player 2
+        ball.x = paddle2.left - BALL_SIZE * 2  # Position near player 2's paddle, but not too close
+        ball.y = paddle2.centery
+        ball_speed[0] = -BALL_SPEED_X
     ball_speed[1] = BALL_SPEED_Y * random.choice([-1, 1])  # Randomize vertical direction
+
+def check_winner():
+    if (player1_score >= WINNING_SCORE and player1_score - player2_score >= WINNING_MARGIN) or \
+       (player2_score >= WINNING_SCORE and player2_score - player1_score >= WINNING_MARGIN):
+        return True
+    return False
+
+def update_intro_screen():
+    if not music.is_playing('intro_music'):
+        global game_state
+        game_state = TITLE_SCREEN
 
 def on_key_down(key):
     global game_state, single_player
@@ -164,12 +233,15 @@ def on_key_down(key):
         elif key == keys.K_2:
             single_player = False
             start_game()
+    elif game_state == GAME_OVER:
+        if key == keys.RETURN:
+            game_state = TITLE_SCREEN
 
 def start_game():
-    global game_state, PLAYER1_SCORE, PLAYER2_SCORE
+    global game_state, player1_score, player2_score
     game_state = GAME_PLAY
-    PLAYER1_SCORE = 0
-    PLAYER2_SCORE = 0
+    player1_score = 0
+    player2_score = 0
     reset_ball(serving_player=1)  # Player 1 serves first
 
 pgzrun.go()
