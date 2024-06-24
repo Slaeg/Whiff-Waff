@@ -1,3 +1,5 @@
+# This bit makes the window appear in the top left corner.
+# It needs to go before importing pgzrun or it won't work!
 x = 10
 y = 10
 import os
@@ -223,6 +225,9 @@ def update_intro_screen():
     if not music.is_playing('intro_music'):
         global game_state
         game_state = TITLE_SCREEN
+        music.set_volume(0.5)  # Set volume to 50%
+        music.play('main_music')  # Start the main music and loop it
+
 
 def on_key_down(key):
     global game_state, single_player
