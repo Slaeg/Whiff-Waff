@@ -66,11 +66,11 @@ def draw_intro_screen():
     screen.fill("black")  # Set the background to black
     screen.draw.text("Ping-pong was invented on the dining tables of England in the 19th century, and it was called Wiff-waff!", center=(WIDTH // 2, HEIGHT // 3), fontsize=30, color="white", width=WIDTH-40)
     screen.draw.text("And there, I think, you have the difference between us and the rest of the world.", center=(WIDTH // 2, HEIGHT // 3 + 40), fontsize=30, color="white", width=WIDTH-40)
-    screen.draw.text("Other nations, the French, looked at a dining table and saw an opportunity to have dinner; we looked at it and saw an opportunity to play Wiff-waff.", center=(WIDTH // 2, HEIGHT // 3 + 80), fontsize=30, color="white", width=WIDTH-40)
+    screen.draw.text("Other nations, the French, looked at a dining table and saw an opportunity to have dinner; we looked at it and saw an opportunity to play Whiff-waff.", center=(WIDTH // 2, HEIGHT // 3 + 80), fontsize=30, color="white", width=WIDTH-40)
     screen.draw.text("- Boris Johnson", center=(WIDTH // 2, HEIGHT // 3 + 120), fontsize=30, color="white", width=WIDTH-40)
 
 def draw_title_screen():
-    screen.draw.text("Wiff Waff", center=(WIDTH // 2, HEIGHT // 3), fontsize=60, color="white")
+    screen.draw.text("Whiff-Waff", center=(WIDTH // 2, HEIGHT // 3), fontsize=60, color="white")
     screen.draw.text("Press 1 for 1 Player", center=(WIDTH // 2, HEIGHT // 2), fontsize=40, color="white")
     screen.draw.text("Press 2 for 2 Players", center=(WIDTH // 2, HEIGHT // 2 + 50), fontsize=40, color="white")
 
