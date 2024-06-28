@@ -1,9 +1,5 @@
-# This bit makes the window appear in the top left corner.
-# It needs to go before importing pgzrun or it won't work!
-x = 10
-y = 10
 import os
-os.environ['SDL_VIDEO_WINDOW_POS'] = f'{x},{y}'
+os.environ['SDL_VIDEO_CENTERED'] = '1'  # Center the window
 
 import pgzrun
 import random
