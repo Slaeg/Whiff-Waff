@@ -15,7 +15,7 @@ PADDLE_SPEED = 5
 AI_PADDLE_SPEED = 3
 BALL_SPEED_X = 4
 BALL_SPEED_Y = 4
-MAX_BOUNCE_ANGLE = 45  # Max bounce angle in degrees
+MAX_BOUNCE_ANGLE = 60  # Max bounce angle in degrees
 WINNING_SCORE = 11
 WINNING_MARGIN = 2
 
