@@ -46,6 +46,9 @@ AI_RANDOMNESS = 20
 # Music for the intro screen
 music.play_once('intro_music')  # Ensure the music plays once
 
+# Flag to check if victory sound has been played
+victory_sound_played = False
+
 def draw():
     screen.clear()
     screen.blit('background', (0, 0))  # Draw the background
@@ -78,10 +81,14 @@ def draw_game_play():
     screen.draw.text(str(player2_score), (WIDTH * 3 // 4, 20), fontsize=50)
 
 def draw_game_over():
+    global victory_sound_played
     winner = "Player 1" if player1_score > player2_score else "Player 2"
+    if not victory_sound_played:
+        sounds.victory.play()  # Play the victory sound
+        victory_sound_played = True
     screen.draw.text(f"{winner} Wins!", center=(WIDTH // 2, HEIGHT // 3), fontsize=60, color="white")
     screen.draw.text("Press ENTER to Restart", center=(WIDTH // 2, HEIGHT // 2), fontsize=40, color="white")
-
+    
 def update():
     if game_state == INTRO_SCREEN:
         update_intro_screen()
@@ -213,8 +220,10 @@ def reset_ball(serving_player):
     ball_speed[1] = BALL_SPEED_Y * random.choice([-1, 1])  # Randomize vertical direction
 
 def check_winner():
+    global victory_sound_played
     if (player1_score >= WINNING_SCORE and player1_score - player2_score >= WINNING_MARGIN) or \
        (player2_score >= WINNING_SCORE and player2_score - player1_score >= WINNING_MARGIN):
+        victory_sound_played = False  # Reset flag when game over
         return True
     return False
 
@@ -240,10 +249,11 @@ def on_key_down(key):
             game_state = TITLE_SCREEN
 
 def start_game():
-    global game_state, player1_score, player2_score
+    global game_state, player1_score, player2_score, victory_sound_played
     game_state = GAME_PLAY
     player1_score = 0
     player2_score = 0
+    victory_sound_played = False  # Reset the flag at the start of the game
     reset_ball(serving_player=1)  # Player 1 serves first
 
 pgzrun.go()
