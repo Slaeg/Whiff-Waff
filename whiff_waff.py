@@ -235,7 +235,7 @@ def update_intro_screen():
     if not music.is_playing('intro_music'):
         global game_state
         game_state = TITLE_SCREEN
-        music.set_volume(0.5)  # Set volume to 50%
+        music.set_volume(0.3)  # Set volume to 30%
         music.play('main_music')  # Start the main music and loop it
 
 
