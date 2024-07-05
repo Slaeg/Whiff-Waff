@@ -29,8 +29,9 @@ single_player = False
 
 # Load game objects
 paddle1 = Actor('paddle', (30, HEIGHT // 2))
-paddle2 = Actor('paddle', (WIDTH - 30, HEIGHT // 2))
+paddle2 = Actor('paddle2', (WIDTH - 30, HEIGHT // 2))  # Updated to use 'paddle2' graphic
 ball = Actor('ball', (WIDTH // 2, HEIGHT // 2))
+
 
 # Initial ball speed
 ball_speed = [BALL_SPEED_X, BALL_SPEED_Y]
@@ -84,11 +85,14 @@ def draw_game_over():
     global victory_sound_played
     winner = "Player 1" if player1_score > player2_score else "Player 2"
     if not victory_sound_played:
-        sounds.victory.play()  # Play the victory sound
+        clock.schedule_unique(play_victory_sound, 1.0)  # Schedule victory sound to play after 1 second
         victory_sound_played = True
     screen.draw.text(f"{winner} Wins!", center=(WIDTH // 2, HEIGHT // 3), fontsize=60, color="white")
     screen.draw.text("Press ENTER to Restart", center=(WIDTH // 2, HEIGHT // 2), fontsize=40, color="white")
-    
+
+def play_victory_sound():
+    sounds.victory.play()
+
 def update():
     if game_state == INTRO_SCREEN:
         update_intro_screen()
