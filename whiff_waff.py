@@ -13,8 +13,8 @@ PADDLE_HEIGHT = 100
 BALL_SIZE = 10
 PADDLE_SPEED = 5
 AI_PADDLE_SPEED = 3
-BALL_SPEED_X = 4
-BALL_SPEED_Y = 4
+BALL_SPEED_X = 6
+BALL_SPEED_Y = 6
 MAX_BOUNCE_ANGLE = 60  # Max bounce angle in degrees
 WINNING_SCORE = 11
 WINNING_MARGIN = 2
@@ -42,7 +42,7 @@ player2_score = 0
 
 # AI delay and randomness
 AI_REACTION_DELAY = 0.05
-AI_RANDOMNESS = 20
+AI_RANDOMNESS = 10
 
 # Music for the intro screen
 music.play_once('intro_music')  # Ensure the music plays once
