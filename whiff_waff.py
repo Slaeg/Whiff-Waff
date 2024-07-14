@@ -11,8 +11,8 @@ HEIGHT = 600
 PADDLE_WIDTH = 10
 PADDLE_HEIGHT = 100
 BALL_SIZE = 10
-PADDLE_SPEED = 5
-AI_PADDLE_SPEED = 3
+PADDLE_SPEED = 7
+AI_PADDLE_SPEED = 5
 BALL_SPEED_X = 6
 BALL_SPEED_Y = 6
 MAX_BOUNCE_ANGLE = 60  # Max bounce angle in degrees
@@ -235,7 +235,7 @@ def update_intro_screen():
     if not music.is_playing('intro_music'):
         global game_state
         game_state = TITLE_SCREEN
-        music.set_volume(0.3)  # Set volume to 30%
+        music.set_volume(0.5)  # Set volume to 50%
         music.play('main_music')  # Start the main music and loop it
 
 
