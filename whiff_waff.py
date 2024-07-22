@@ -32,6 +32,9 @@ paddle1 = Actor('paddle', (30, HEIGHT // 2))
 paddle2 = Actor('paddle2', (WIDTH - 30, HEIGHT // 2))  # Updated to use 'paddle2' graphic
 ball = Actor('ball', (WIDTH // 2, HEIGHT // 2))
 
+intro_screen_background = "intro_screen_background"
+title_screen_background = "title_screen_background"
+
 
 # Initial ball speed
 ball_speed = [BALL_SPEED_X, BALL_SPEED_Y]
@@ -63,16 +66,15 @@ def draw():
         draw_game_over()
 
 def draw_intro_screen():
-    screen.fill("black")  # Set the background to black
-    screen.draw.text("Ping-pong was invented on the dining tables of England in the 19th century, and it was called Whiff-waff!", center=(WIDTH // 2, HEIGHT // 3), fontsize=30, color="white", width=WIDTH-40)
-    screen.draw.text("And there, I think, you have the difference between us and the rest of the world.", center=(WIDTH // 2, HEIGHT // 3 + 40), fontsize=30, color="white", width=WIDTH-40)
-    screen.draw.text("Other nations, the French, looked at a dining table and saw an opportunity to have dinner; we looked at it and saw an opportunity to play Whiff-waff.", center=(WIDTH // 2, HEIGHT // 3 + 80), fontsize=30, color="white", width=WIDTH-40)
-    screen.draw.text("- Boris Johnson", center=(WIDTH // 2, HEIGHT // 3 + 120), fontsize=30, color="white", width=WIDTH-40)
+    screen.blit(intro_screen_background, (0, 0))  # Set the intro screen background
+    
 
 def draw_title_screen():
+    screen.blit(title_screen_background, (0, 0))  # Set the title screen background
     screen.draw.text("Whiff-Waff", center=(WIDTH // 2, HEIGHT // 3), fontsize=60, color="white")
     screen.draw.text("Press 1 for 1 Player", center=(WIDTH // 2, HEIGHT // 2), fontsize=40, color="white")
     screen.draw.text("Press 2 for 2 Players", center=(WIDTH // 2, HEIGHT // 2 + 50), fontsize=40, color="white")
+
 
 def draw_game_play():
     paddle1.draw()
